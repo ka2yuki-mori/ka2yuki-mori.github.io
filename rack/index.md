@@ -104,4 +104,90 @@ Rackのミドルウェアとアプリケーションの概念図：
 ![](https://docs.pylonsproject.org/projects/pylons-webframework/en/v1.0.1rc1/_images/pylons_as_onion.png)  
 [引用:Pylons:WSGIミドルウェア](https://docs.pylonsproject.org/projects/pylons-webframework/en/v1.0.1rc1/concepts.html#wsgi-middleware)
 
-ソースコード：https://github.com/ka2yuki-mori/rack_app
+
+## RailsとRack の関係
+> `config.ru`.. これこそ Rackアプリケーション の証左
+
+config.ru内にも `This file is used by Rack-based severs to start the application.`
+
+> Rails では いくつかの Rackミドルウェアも利用しています。  
+`$ rails middleware`
+```sh
+$ rails middleware
+use ActionDispatch::HostAuthorization
+use Rack::Sendfile       # <- Rack
+use ActionDispatch::Static
+use ActionDispatch::Executor
+use ActionDispatch::ServerTiming
+use Rack::Runtime        # <- Rack
+use Rack::MethodOverride # <- Rack
+use ActionDispatch::RequestId
+use ActionDispatch::RemoteIp
+use Rails::Rack::Logger  # <- Rack
+use ActionDispatch::ShowExceptions
+use WebConsole::Middleware
+use ActionDispatch::DebugExceptions
+use ActionDispatch::ActionableExceptions
+use ActionDispatch::Reloader
+use ActionDispatch::Callbacks
+use ActiveRecord::Migration::CheckPending
+use ActionDispatch::Cookies
+use ActionDispatch::Session::CookieStore
+use ActionDispatch::Flash
+use ActionDispatch::ContentSecurityPolicy::Middleware
+use ActionDispatch::PermissionsPolicy::Middleware
+use Rack::Head           # <- Rack
+use Rack::ConditionalGet # <- Rack
+use Rack::ETag           # <- Rack
+use Rack::TempfileReaper # <- Rack
+run RailsRackSample::Application.routes
+```
+> 上から順にミドルウェアが積まれた順番 | パーフェクトRubyonRails:p139
+
+
+## 自作 Rackミドルウェア を Rails に追加
+```sh
+mkdir lib/middlewares
+touch lib/middlewares/upcase_middleware.rb
+```
+```upcase_middleware.rb
+class UpcaseMiddleware
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    status, headers, body = @app.call(env)
+    body.each {|s| s.gsub!(/ruby/i, "RUBY")}
+    [status, headers, body]
+  end
+end
+```
+- development環境のみ： `config/environments/developmens.rb`  
+- 常に使用する：`config/application.rb`
+> configオブジェクト を**通じて** Rackミドルウェア管理
+
+```development.rb
+require "middlewares/upcase_middleware"
+
+Rails.application.configure do
+  # 通常のミドルウェア追加
+  # config.middleware.use UpcaseMiddleware
+  # 特定ミドルウェアの次に追加する指定
+  config.middleware.insert_after Rack::ETag, UpcaseMiddleware
+```
+```sh
+$ rails middleware # ミドルウェアの確認
+...
+use Rack::ETag
+use UpcaseMiddleware # <-
+use Rack::TempfileReaper
+run RailsRackSample::Application.routes
+
+$ rails s # ruby が RUBY に変換されてるか確認
+```
+
+more info: 
+- https://guides.rubyonrails.org/rails_on_rack.html#introduction-to-rack
+
+
