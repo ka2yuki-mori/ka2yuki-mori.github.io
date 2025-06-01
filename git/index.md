@@ -9,3 +9,8 @@ git設定の編集
 ```sh
 git config --global --edit
 ```
+
+merge してない branch確認
+```sh
+git branch --no-merged
+```
