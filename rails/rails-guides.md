@@ -1,6 +1,6 @@
 # Railsガイド
 
-> こちらのRailsGuides:v8.0を勉強してみました。
+> こちらのRailsGuides:v8.0を和訳勉強してみました。
 > https://guides.rubyonrails.org/getting_started.html
 
 # Railsを始めよう
@@ -21,4 +21,4 @@ RailsはWebフレームワーク。Rubyプログラムの為に構築されま�
 - [公式Rubyプログラム言語 WebSite](https://www.ruby-lang.org/en/documentation/)
 - [無料プログラミング書籍の一覧](https://github.com/EbookFoundation/free-programming-books/blob/master/books/free-programming-books-langs.md#ruby) (めも：一覧の確認おすすめ)
 
----
+続きはこちら：[guides.rubyonrails.org](https://guides.rubyonrails.org/getting_started.html#introduction)
