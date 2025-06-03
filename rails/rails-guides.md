@@ -1,5 +1,4 @@
 # Railsガイド
-
 > こちらのRailsGuides:v8.0を和訳勉強してみました。
 > https://guides.rubyonrails.org/getting_started.html
 

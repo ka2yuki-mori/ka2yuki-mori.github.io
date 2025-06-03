@@ -1,4 +1,4 @@
-- [ホーム](/)
+<!-- - [ホーム](/) -->
 - [Rails](/rails/index.md)
   - [Rails Guides](/rails/rails-guides.md)
   - [Rails CLI](/rails/rails-cli.md)
