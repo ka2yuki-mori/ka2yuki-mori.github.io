@@ -1,6 +1,4 @@
 # Railsめも
-> https://rubyonrails.org/docs
-
 
 # Rails DBコマンド
 | コマンド | 概要 |
@@ -51,12 +49,21 @@ rails runner "p Blog.count"
 この時ボトルネックとなりやすいのはDBアクセスに関する部分。
   
   
+# 秘密情報を管理
+[12factor app](https://12factor.net/ja/)の考え方: 秘密の文字列は環境変数経由で利用する | パーフェクトRubyonRails:p153
+
+✅ ステージング環境用に credentials を分ける
+```sh
+bin/rails credentials:edit --environment staging # 作成
+bin/rails credentials:show --environment staging # 確認
+```
+
+- config/credentials/staging.key : 作成される
+- config/credentials/staging.yml.enc : 作成される
+- .gitignore へ staging.key が自動的に登録される（staging.keyをコミットしないように）
 
 
 
+ ## link
 
-
-
-
-
-
+> https://rubyonrails.org/docs
