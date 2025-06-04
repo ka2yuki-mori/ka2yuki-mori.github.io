@@ -50,9 +50,9 @@ rails runner "p Blog.count"
   
   
 # 秘密情報を管理
-[12factor app](https://12factor.net/ja/)の考え方: 秘密の文字列は環境変数経由で利用する | パーフェクトRubyonRails:p153
+:memo: 未読：[12factor app](https://12factor.net/ja/)の考え方: 秘密の文字列は環境変数経由で利用する | パーフェクトRubyonRails:p153
 
-✅ ステージング環境用に credentials を分ける | パーフェクトRubyonRails:p157
+:heavy_check_mark: ステージング環境用に credentials を分ける | パーフェクトRubyonRails:p157
 ```sh
 bin/rails credentials:edit --environment staging # 作成
 bin/rails credentials:show --environment staging # 確認

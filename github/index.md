@@ -6,8 +6,7 @@
 
 - [emoji](https://gist.github.com/rxaviers/7360908)
 - [Github トピック: good-first-issue](https://github.com/topics/good-first-issue)
-- [Githubブラウザ上エディター github.dev](https://docs.github.com/ja/codespaces/the-githubdev-web-based-editor)
-
+- [Githubブラウザのエディター github.dev](https://docs.github.com/ja/codespaces/the-githubdev-web-based-editor)
 
 - [GitHub公式 blog](https://github.blog/)
-- [GitHubを学ぶ インタラクティブコース](https://skills.github.com/)
+- [GitHub Skills](https://skills.github.com/)
