@@ -9,6 +9,7 @@
 - [Git](/git/index.md)
 - [GitHub](/github/index.md)
 - [SSG](/ssg/index.md)
+- [Next.js](https://next-learn-ja.vercel.app/)
 - [Rack](/rack/index.md)
 - [MarkDown](/markdown.md)
 - [FAQ](faq.md)
