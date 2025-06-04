@@ -8,8 +8,9 @@
   - [応用編](advanced.md) -->
 - [Git](/git/index.md)
 - [GitHub](/github/index.md)
-- [SSG](/ssg/index.md)
+- [MarkDown](/markdown.md)
 - [Next.js](https://next-learn-ja.vercel.app/)
 - [Rack](/rack/index.md)
-- [MarkDown](/markdown.md)
+- [SSG](/ssg/index.md)
+- [Security](/security/index.md)
 - [FAQ](faq.md)
