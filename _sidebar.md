@@ -15,10 +15,10 @@
 - [Rack](/rack/index.md)
 - [SSG](/ssg/index.md)
 - [セキュリティ](/security/index.md)
-- [Tutorials](https://www.learnenough.com/courses)
+- [Tutorials link](https://www.learnenough.com/courses)
 - [FAQ](faq.md)
 
 <!-- _sidebar.md -->
 
-- <a href="https://chatgpt.com/"><i class="fa-brands fa-openai"></i> ChatGPT</a>
+- <a href="https://chatgpt.com/"><i class="fa-solid fa-openai"></i>ChatGPT link</a>
 - <a href="https://amzn.to/43SoHED"><strong>Amazon.com</strong><i class="fa-solid fa-cart-shopping"></i> </a>
