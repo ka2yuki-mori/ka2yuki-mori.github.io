@@ -1,8 +1,8 @@
 # Rack memo
 
 ## Ruckとは：
-  - インターフェイスを共通化した仕様で実装となっているライブラリ：WebAppサーバとWebAppフレームワーク間のインターフェイス。：[パーフェクトRubyonRails](https://amzn.to/45aUlzo): p129
-  - PythonのWGSIという規格を元に提案されたものが Ruck。｜[パーフェクトRubyonRails](https://amzn.to/45aUlzo): p130
+  - インターフェイスを共通化した仕様で実装となっているライブラリ：WebAppサーバとWebAppフレームワーク間のインターフェイス。：[[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo): p129
+  - PythonのWGSIという規格を元に提案されたものが Ruck。｜[[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo): p130
   - https://github.com/rack/rack
 
 Rcukインターフェイス：
@@ -21,7 +21,7 @@ def call(env)
 end
 ```
 
-> **どのような**長大なアプリケーションでも..**最終的**に収束する..　Ruck対応のアプリケーション。[パーフェクトRubyonRails](https://amzn.to/45aUlzo):p131
+> **どのような**長大なアプリケーションでも..**最終的**に収束する..　Ruck対応のアプリケーション。[[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo):p131
 
 ## かんたんなRuckアプリケーション
 ```sh
@@ -142,7 +142,7 @@ use Rack::ETag           # <- Rack
 use Rack::TempfileReaper # <- Rack
 run RailsRackSample::Application.routes
 ```
-> 上から順にミドルウェアが積まれた順番 | [パーフェクトRubyonRails](https://amzn.to/45aUlzo):p139
+> 上から順にミドルウェアが積まれた順番 | [[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo):p139
 
 
 ## 自作 Rackミドルウェア を Rails に追加
