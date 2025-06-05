@@ -1,4 +1,5 @@
 <!-- - [ホーム](/) -->
+- [コンポーネント](/components/index.md)
 - [Rails](/rails/index.md)
   - [Rails Tutorial](/rails/rails-tutorial.md)
   - [Rails CLI](/rails/rails-cli.md)

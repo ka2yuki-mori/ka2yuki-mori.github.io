@@ -53,6 +53,7 @@ rails runner "p Blog.count"
 :memo: 未読：[12factor app](https://12factor.net/ja/)の考え方: 秘密の文字列は環境変数経由で利用する | [[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo):p153
 
 :heavy_check_mark: ステージング環境用に credentials を分ける | [[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo):p157
+
 ```sh
 bin/rails credentials:edit --environment staging # 作成
 bin/rails credentials:show --environment staging # 確認
@@ -61,6 +62,22 @@ bin/rails credentials:show --environment staging # 確認
 - config/credentials/staging.yml.enc : 作成される
 - .gitignore へ staging.key が自動的に登録される（staging.keyをコミットしないように）
 
+
+# 参考書籍
+<a target="_blank" href="https://amzn.to/43QRVDL" style="
+    border: 2px solid;
+    width: 220px;
+    display: block;
+    overflow: hidden;
+    border-radius: 10px;
+    border-color: #c1cbc1;
+    text-align: center;
+    padding: 9px 0;
+    animation: flashShadow 2.5s infinite alternate;
+    ">
+  <img src="https://m.media-amazon.com/images/W/MEDIAX_1215821-T1/images/I/81yskupyNhL._AC_AIweblab1006854,T3_SF700,700_PQ60_.jpg?aicid=detailPage-mediaBlock" alt="パーフェクトRubyonRails" style="border:none;width:110px;" /><script>window.dataLayer = window.dataLayer || [];function gtag() { dataLayer.push(arguments); }gtag('js', new Date());gtag('config', 'G-CJF3K99R7P');</script><br />
+  パーフェクトRubyonRails | Amazon
+</a>
 
 
  ## link
