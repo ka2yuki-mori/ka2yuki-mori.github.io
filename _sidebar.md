@@ -20,4 +20,4 @@
 <!-- _sidebar.md -->
 
 - <a href="https://chatgpt.com/"><i class="fa-brands fa-openai"></i> ChatGPT</a>
-- <a href="https://amzn.to/43SoHED"><i class="fa-brands fa-cart"></i><strong>Amazon.com</strong></a>
+- <a href="https://amzn.to/43SoHED"><strong>Amazon.com</strong><i class="fa-solid fa-cart-shopping"></i> </a>
