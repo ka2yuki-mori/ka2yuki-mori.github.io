@@ -7,7 +7,7 @@
 
 <a href="https://katsuyuki7.gumroad.com/l/hnobv" target="_blank" style="
   display: inline-block;
-  background: #90e790;
+  background: #10b981;
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;

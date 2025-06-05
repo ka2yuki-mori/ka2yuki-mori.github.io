@@ -70,7 +70,7 @@ bin/rails credentials:show --environment staging # 確認
     display: block;
     overflow: hidden;
     border-radius: 10px;
-    border-color: #c1cbc1;
+    border-color: #90e790;
     text-align: center;
     padding: 9px 0;
     animation: flashShadow 2.5s infinite alternate;
