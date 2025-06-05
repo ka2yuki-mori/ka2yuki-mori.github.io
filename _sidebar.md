@@ -21,4 +21,7 @@
 <!-- _sidebar.md -->
 
 - <a href="https://chatgpt.com/"><i class="fa-solid fa-openai"></i>ChatGPT link</a>
-- <a href="https://amzn.to/43SoHED"><strong>Amazon.com</strong><i class="fa-solid fa-cart-shopping"></i> </a>
+- <a href="https://amzn.to/43SoHED"><strong>Amazon.com </strong><i class="fa-solid fa-cart-shopping" style="
+    box-shadow: 3px 2px 1px;
+    border: solid 1px;
+    padding: 2px;"></i> </a>
