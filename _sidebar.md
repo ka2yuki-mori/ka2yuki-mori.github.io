@@ -26,7 +26,7 @@
     border: solid 1px;
     padding: 2px;"></i> </a>
 
-- [コンポーネント](/components/index.md)
+<!-- - [コンポーネント](/components/index.md) -->
 - <a href="/#/components/index">コンポーネント
 <i class="fa-solid fa-cart-shopping" style="
     box-shadow: 3px 2px 1px;
