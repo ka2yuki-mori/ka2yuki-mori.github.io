@@ -1,6 +1,7 @@
 <!-- - [ホーム](/) -->
 - [Rails](/rails/index.md)
   - [Rails Tutorial](/rails/rails-tutorial.md)
+  - [Rails SetUP](/rails/tips.md)
   - [Rails CLI](/rails/rails-cli.md)
 
 <!-- - ガイド
