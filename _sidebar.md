@@ -10,6 +10,7 @@
 - [Git](/git/index.md)
 - [GitHub](/github/index.md)
 - [MarkDown](/markdown.md)
+- [パッケージマネージャー](/package-manager/index.md)
 - [マーケティング](/marketing/index.md)
 - [Next.js](https://next-learn-ja.vercel.app/)
 - [Rack](/rack/index.md)
