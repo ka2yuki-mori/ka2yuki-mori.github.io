@@ -1,4 +1,55 @@
-# Railsめも
+# importmapを使ってBootstrap導入
+Importmapで Bootstrap / jQuery / Popper.js 導入方法
+
+1. **importmap.rb にパッケージを追加**
+
+```rb
+# config/importmap.rb
+pin "bootstrap", to: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+pin "jquery",    to: "https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"
+pin "popper",    to: "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+```
+
+`config/importmap.rb` で pin できるのは JavaScript ファイルだけ。  
+CSS（Bootstrapのスタイルシート）は Importmap では管理できません。  
+そのため、Bootstrap の CSS は <link> タグで HTML（例: application.html.erb の <head> 内）に記述する必要があります。
+
+2. application.js でインポート
+
+```js
+// app/javascript/application.js
+import "bootstrap"
+import "jquery"
+import "popper"
+```
+
+3. BootstrapのCSSはCDNで読み込む（例）
+```js
+<!-- app/views/layouts/application.html.erb の <head> 内など -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+```
+
+まとめ
+- Importmap で pin できるのは JavaScript だけ
+- CSS（Bootstrapのスタイル）は <link> タグで読み込む必要がある
+
+
+---
+<a target="_blank" href="https://amzn.to/43QRVDL" style="
+    border: 2px solid;
+    width: 220px;
+    display: block;
+    overflow: hidden;
+    border-radius: 10px;
+    border-color: #90e790;
+    text-align: center;
+    padding: 9px 0;
+    animation: flashShadow 2.5s infinite alternate;
+    ">
+  <img src="https://m.media-amazon.com/images/W/MEDIAX_1215821-T1/images/I/81yskupyNhL._AC_AIweblab1006854,T3_SF700,700_PQ60_.jpg?aicid=detailPage-mediaBlock" alt="パーフェクトRubyonRails" style="border:none;width:110px;" /><script>window.dataLayer = window.dataLayer || [];function gtag() { dataLayer.push(arguments); }gtag('js', new Date());gtag('config', 'G-CJF3K99R7P');</script><br />
+  パーフェクトRubyonRails | Amazon
+</a>
+---
 
 # Rails DBコマンド
 | コマンド | 概要 |
