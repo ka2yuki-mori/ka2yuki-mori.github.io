@@ -51,6 +51,39 @@ import "popper"
 </a>
 ---
 
+# GitHubログイン | OAuth
+## OAuthとは
+> **プロトコル**: 安全にアクセス権限を提供するための
+
+- **OAuthなし**：GithubのユーザIDとパスワード :arrow_right: アプリA に預ける必要がある
+  - パスワード漏洩
+  - アプリA は ユーザと同じ権限を持つことになる。（Githubにログイン出来てしまう）
+  - Githubから退会させることも
+- OAuth**あり**: パスワード :arrow_right: アプリA に渡さなくてよくなる
+  - Googleログイン や Facebookログインなど
+
+---
+<a target="_blank" 
+  href="https://www.amazon.co.jp/OAuth%E5%BE%B9%E5%BA%95%E5%85%A5%E9%96%80-%E3%82%BB%E3%82%AD%E3%83%A5%E3%82%A2%E3%81%AA%E8%AA%8D%E5%8F%AF%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%82%92%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AE%E5%8E%9F%E5%89%87%E3%81%A8%E5%AE%9F%E8%B7%B5-Justin-Richer/dp/4798159298?&linkCode=sl1&tag=ka2yuki-22&linkId=21dd5bb0da23988e6305cbe032797e5e&language=ja_JP&ref_=as_li_ss_tl" style="
+    border: 2px solid;
+    width: 220px;
+    display: block;
+    overflow: hidden;
+    border-radius: 10px;
+    border-color: #90e790;
+    text-align: center;
+    padding: 9px 5px;
+    animation: flashShadow 2.5s infinite alternate;
+    ">
+  <img src="https://m.media-amazon.com/images/I/71LvP9jh7SL._SY342_.jpg" 
+    alt="OAuth徹底入門 セキュアな認可システムを適用するための原則と実践" 
+    style="border:none;width:110px;" />
+  <script>window.dataLayer = window.dataLayer || [];function gtag() { dataLayer.push(arguments); }gtag('js', new Date());gtag('config', 'G-CJF3K99R7P');</script><br />
+  OAuth徹底入門 セキュアな認可システムを適用するための原則と実践 | amazon.co.jp
+</a>
+---
+
+
 # Rails DBコマンド
 | コマンド | 概要 |
 |---------|------|
