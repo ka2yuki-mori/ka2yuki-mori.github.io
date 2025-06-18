@@ -51,6 +51,8 @@ import "popper"
 </a>
 ---
 
+
+
 # GitHubログイン | OAuth
 ## OAuthとは
 > **プロトコル**: 安全にアクセス権限を提供するための
@@ -61,7 +63,6 @@ import "popper"
   - Githubから退会させることも
 - OAuth**あり**: パスワード :arrow_right: アプリA に渡さなくてよくなる
   - Googleログイン や Facebookログインなど
-
 ---
 <a target="_blank" 
   href="https://www.amazon.co.jp/OAuth%E5%BE%B9%E5%BA%95%E5%85%A5%E9%96%80-%E3%82%BB%E3%82%AD%E3%83%A5%E3%82%A2%E3%81%AA%E8%AA%8D%E5%8F%AF%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%82%92%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AE%E5%8E%9F%E5%89%87%E3%81%A8%E5%AE%9F%E8%B7%B5-Justin-Richer/dp/4798159298?&linkCode=sl1&tag=ka2yuki-22&linkId=21dd5bb0da23988e6305cbe032797e5e&language=ja_JP&ref_=as_li_ss_tl" style="
@@ -83,7 +84,89 @@ import "popper"
 </a>
 ---
 
+## GitHub登録
+Settings > Developer settings > OAuth Apps
 
+| 項目 | 内容 | 意味 |
+|--------|--------|--------|
+| Application name | アプリの名前 | アプリケーション名 |
+| Homepage URL | `http://localhost:3000/` | アプリのURL |
+| Appllication description | アプリの概要 | アプリの概要 |
+| Authorization callback URL | `http://localhost:3000/auth/github/callback | OAuth認証**後** に遷移するURL |
+
+## ログイン機能の作成
+
+機能一覧: 
+- 「GitHubでログイン」というリンク追加 on ヘッダー
+- Github認証画面に遷移 when Click
+- Github認証完了 ⇒ アプリにログイン
+-「GitHubでログイン」が→「GitHubでログアウト」on ヘッダ
+- ログアウトできる
+
+使用gem: 
+- omniauth 
+- omniauth-github
+- omniauth-rails_csrf_protection
+
+> OmniAuth:  
+ユーザ認証機能の**ベースgem**。  
+「どのような形式で認証するか」は OmniAuthとは別に実装。OmniOAuthと組み合わせることで様々な(google/facebookログインなど)認証形式を提供できる。  
+
+> OmniAuth Github:  
+GithubのOAuth認証を使用できる
+
+注意点：
+- CSRF（クロスサイトリクエストフォージェリ）の脆弱性対策。
+  - ソーシャルアカウント追加が実行の可能性 → アカウント乗っ取りの可能性。
+- 「GitHubログイン」**だけ**の場合この脆弱性の悪用はできない
+- 将来的に複数のサービスプロバイダー対応を備えてあらかじめ対策。:heavy_check_mark:  
+  - :heavy_check_mark:gemが存在する：この脆弱性を対策するライブラリ(gem)
+
+[パーフェクトRubyonRails](https://amzn.to/45aUlzo):p293
+
+### Gemインストール
+Gemfileに追加
+```Gemfile
+gem 'omniauth'
+gem 'omniauth-github'
+gem 'omniauth-rails_csrf_protection'
+```
+追加したgemをインストール
+```sh
+# ターミナル
+>$ bundle install
+```
+
+ファイル作成（GitHubに登録したアプリのClient ID/Client secretsを取り扱う：`config/initializers/omniauth.rb`
+```rb
+Rails.application.config.middleware.use OmniAuth::Builder do
+  provider :github,
+            Rails.application.credentials.github[:client_id],
+            Rails.application.credentials.github[:client_secret]
+end
+```
+
+暗号化のためコマンドから複合化してYAMLファイルを開きClient ID/Client secretsを保存。暗号化されて保存される(GitHubに登録したアプリのClient IDとClient secrets)
+```bash
+bin/rails credentials:edit
+```
+```yml
+secret_key_base: 英数字が羅列されている
+github:
+  client_id: "クライアントID"
+  client_secret: "クライアント＿シークレット"
+```
+- [omniauth](https://github.com/omniauth/omniauth)
+- [omniauth-github](https://github.com/omniauth/omniauth-github)
+
+
+
+
+
+
+---
+---
+---
 # Rails DBコマンド
 | コマンド | 概要 |
 |---------|------|
