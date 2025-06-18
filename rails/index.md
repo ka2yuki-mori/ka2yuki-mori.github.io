@@ -219,6 +219,9 @@ bin/rails db:migrate
 ```
 - CSRF対策のため：リンクは postメソッド
 
+ログインをクリック → 認証ボタンをクリック → エラー(認証後の処理を書いていないため)
+<img src="/assets/img/auth-err.png" />
+
 ### 認証後の処理：
 
 
