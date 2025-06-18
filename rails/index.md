@@ -33,7 +33,6 @@ import "popper"
 - **Importmap**で **pin**できるのは **JavaScriptだけ**
 - **CSS**（Bootstrapのスタイル）は &lt;link&gt;タグ 読み込adfasdfd
 
-
 ---
 <a target="_blank" href="https://amzn.to/43QRVDL" style="
     border: 2px solid;
@@ -50,7 +49,6 @@ import "popper"
   パーフェクトRubyonRails | Amazon
 </a>
 ---
-
 
 
 # GitHubログイン | OAuth
@@ -84,6 +82,7 @@ import "popper"
 </a>
 ---
 
+
 ## GitHub登録
 Settings > Developer settings > OAuth Apps
 
@@ -93,6 +92,7 @@ Settings > Developer settings > OAuth Apps
 | Homepage URL | `http://localhost:3000/` | アプリのURL |
 | Appllication description | アプリの概要 | アプリの概要 |
 | Authorization callback URL | `http://localhost:3000/auth/github/callback | OAuth認証**後** に遷移するURL |
+
 
 ## ログイン機能の作成
 
@@ -145,6 +145,9 @@ Rails.application.config.middleware.use OmniAuth::Builder do
             Rails.application.credentials.github[:client_secret]
 end
 ```
+> OmniAuth は Rackミドルウェア として動作：  
+「/auth/:provider」URLにマッチするアクセスを受け取ると認証処理を開始。  
+:provider として渡された文字列。を どのサービスプロバイダーで認証したらよいか判別 しています。[パーフェクトRubyonRails](https://amzn.to/45aUlzo):p296
 
 暗号化のためコマンドから複合化してYAMLファイルを開きClient ID/Client secretsを保存。暗号化されて保存される(GitHubに登録したアプリのClient IDとClient secrets)
 ```bash
@@ -158,14 +161,68 @@ github:
 ```
 - [omniauth](https://github.com/omniauth/omniauth)
 - [omniauth-github](https://github.com/omniauth/omniauth-github)
+- [omniauth-rails_csrf_protection](https://github.com/cookpad/omniauth-rails_csrf_protection)
+
+### Userモデル作成
+```sh
+bin/rails g model user provider uid name image_url
+```
+
+| カラム名 | 意味 |
+|--------|--------|
+| provider | OmniAuthの認証で使用するプロバイダ名（例："github" |
+| uid | provider毎に与えられるユーザ識別用の文字列 |
+| name | GitHubユーザ名 |
+| image_url | Githubアイコン画像のURL|
+
+仕様：  
+NULLになるケースがないカラムの存在  
+想定外のデータ不整合を防ぐ
+- NOT NULL制約
+- ユニークインデックス  
+```rb
+# db/migrate/20250618112709_create_user.rb
+class CreateUsers < ActiveRecord::Migration[7.1]
+  def change
+    create_table :users do |t|
+      t.string :provider,  null: false 
+      t.string :uid,       null: false
+      t.string :name,      null: false
+      t.string :image_url, null: false
+      t.timestamps
+    end
+    # null: falseの部分を追加しました
+    
+    add_index :users, %i[provider uid], unique: true
+    # add_index の行を追加しました
+  end
+end
+```
+マイグレファイルの定義をDataBaseに反映
+```sh
+bin/rails db:migrate
+```
+
+### ログイン処理を作成
+```rb
+# 略
+%body
+  %header.navbar.navbar-expand-sm.navbar-light.bg-light
+    .container
+      = link_to('AwesomeEvents', root_path, class: 'navbar-brand')
+      %ul.navbar-nav
+        %li.nav-ite
+          = link_to "GitHubでログイン", "/auth/github", class: 'nav-link', method: :post
+          # この部分
+  .container
+    = yield
+```
+- CSRF対策のため：リンクは postメソッド
+
+### 認証後の処理：
 
 
 
-
-
-
----
----
 ---
 # Rails DBコマンド
 | コマンド | 概要 |
