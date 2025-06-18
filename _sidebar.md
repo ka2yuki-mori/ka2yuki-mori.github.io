@@ -18,7 +18,7 @@
 - [Rack](/rack/index.md)
 - [SSG](/ssg/index.md)
 - [セキュリティ](/security/index.md)
-- [Tutorials link](https://www.learnenough.com/courses)
+<!-- - [Tutorial links](https://www.learnenough.com/courses) -->
 - [開発環境 | codespace](/development-env.md)
 - [FAQ](faq.md)
 

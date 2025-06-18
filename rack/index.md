@@ -1,16 +1,16 @@
 # Rack memo
 
 ## Ruckとは：
-  - インターフェイスを共通化した仕様で実装となっているライブラリ：WebAppサーバとWebAppフレームワーク間のインターフェイス。：[[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo): p129
+  - インターフェイスを共通化した仕様で実装となっている**ライブラリ**：WebAppサーバとWebAppフレームワーク間の**インターフェイス**。：[[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo): p129
   - PythonのWGSIという規格を元に提案されたものが Ruck。｜[[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo): p130
   - https://github.com/rack/rack
 
-Rcukインターフェイス：
-> Ruck に対応する アプリケーションやフレームワークは Ruck規約 に則ったインターフェイスを定義する必要がある。
+**Rcukインターフェイス**：
+> Ruck に対応するアプリケーションやフレームワーク は Ruck規約 に則ったインターフェイス を定義する必要がある。
 
-- callメソッドを定義する
-- callメソッドは慣習的に env あるいは enviroment と命名する引数を１つ受け取る
-- callメソッドは次の値を配列型で戻り値として返す必要がある
+- <u>callメソッドを定義</u>する
+- callメソッドは慣習的に env あるいは enviroment と命名する<u>引数を１つ</u>受け取る
+- callメソッドは次の値を<u>配列型で戻り値</u>として返す必要がある
   - HTTPステータスコードを表す数値オブジェクト
   - HTTPヘッダーを表すハッシュオブジェクト
   - レスポンスボディとなる文字列を含んだ配列風オブジェクト
@@ -21,7 +21,8 @@ def call(env)
 end
 ```
 
-> **どのような**長大なアプリケーションでも..**最終的**に収束する..　Ruck対応のアプリケーション。[[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo):p131
+> **どのような**長大なアプリケーションでも、**最終的**に**これらの値を返すことができれば** Ruckの規約に則ったアプリケーションとして成立します。  
+**Ruck対応のフレームワークは** 最終的にこのシンプルな形のインターフェイスに**収束**する..　[[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo):p131
 
 ## かんたんなRuckアプリケーション
 ```sh
