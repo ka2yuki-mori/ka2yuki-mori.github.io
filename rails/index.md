@@ -308,7 +308,7 @@ import "popper"
 
 まとめ
 - **Importmap**で **pin**できるのは **JavaScriptだけ**
-- **CSS**（Bootstrapのスタイル）は &lt;link&gt;タグ 読み込adfasdfd
+- **CSS**（Bootstrapのスタイル）は &lt;link&gt;タグ 読み込み
 
 ---
 <a target="_blank" href="https://amzn.to/43QRVDL" style="
@@ -322,7 +322,8 @@ import "popper"
     padding: 9px 0;
     animation: flashShadow 2.5s infinite alternate;
     ">
-  <img src="https://m.media-amazon.com/images/W/MEDIAX_1215821-T1/images/I/81yskupyNhL._AC_AIweblab1006854,T3_SF700,700_PQ60_.jpg?aicid=detailPage-mediaBlock" alt="パーフェクトRubyonRails" style="border:none;width:110px;" /><script>window.dataLayer = window.dataLayer || [];function gtag() { dataLayer.push(arguments); }gtag('js', new Date());gtag('config', 'G-CJF3K99R7P');</script><br />
+  <img src="https://m.media-amazon.com/images/I/81yskupyNhL._SY342_.jpg" 
+    alt="パーフェクトRubyonRails" style="border:none;width:110px;" /><script>window.dataLayer = window.dataLayer || [];function gtag() { dataLayer.push(arguments); }gtag('js', new Date());gtag('config', 'G-CJF3K99R7P');</script><br />
   パーフェクトRubyonRails | Amazon
 </a>
 ---
@@ -495,11 +496,12 @@ bin/rails db:migrate
     = yield
 ```
 - CSRF対策のため：リンクは postメソッド
-- method: :post はJavaScriptが動作して初めてPOSTリクエストになります。JSが無効・読み込まれていない場合はGETになります。
-- Rails UJSの読み込みと、javascript_pack_tag の記述を再確認
+- method: :post はJavaScript/UJSが動作して初めてPOSTリクエストになります。JSが無効・読み込まれていない場合はGETになります。
+- Rails UJSの読み込みと、javascript_importmap_tags の記述を再確認
 
 ログインをクリック → 認証ボタンをクリック → エラー(認証後の処理を書いていないため)  
 <img src="/assets/img/auth-err.png" />
+
 
 ### 認証後の処理：
 
