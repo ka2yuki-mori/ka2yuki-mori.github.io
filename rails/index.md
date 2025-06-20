@@ -1,7 +1,284 @@
 # Rails
 
+## tips
+- `config/initializers/*` 配下のファイルは、Railsアプリ起動時に一度だけ読み込まれ実行されます。
+- そのため、initializersディレクトリ内を変更した場合`rails s`（サーバー）を再起動しないと変更が反映されない。
+
+**まとめ：**  
+initializersディレクトリを編集したら、`rails s` 再起動
+
+### Railsv7のWebpackerは..
+- Rails 7 では Webpackerはデフォルトでは有効になっていません。
+- Rails 7 のデフォルトは Importmap です。
+- Webpackerやesbuild、Viteなどは自分で追加しない限り使われません。
+
+```html
+<a class="nav-link" rel="nofollow" data-method="post" href="/auth/github">GitHubでログイン</a>
+```
+
+## post指定したのに get でリクエストされる
+
+- data-method="post" は Rails の UJS（Unobtrusive JavaScript） 機能によって、JavaScriptが有効な場合のみ動作します。
+- JavaScriptが無効な場合や、UJSが正しく読み込まれていない場合は、通常のリンク（GETリクエスト）として動作します。
+- UJS（Unobtrusive JavaScript） は、Railsが提供するJavaScriptライブラリで、data-method などの属性を解釈してPOSTやDELETEリクエストを送る仕組みです。  
+  JavaScriptが動いていても、UJSが正しく読み込まれていなければ、data-method は機能しません。
+
+まとめ  
+data-method="post" はJavaScript（rails-ujs）が動作して初めて有効。
+それが無効だと、リンクはGETリクエストになる。
+
+
+
+# リクエストが来たときの流れ（RackとRailsの関係）
+- Rackが最初に受け取り、次にRailsに渡す という流れ
+- Railsは「Rackアプリケーション」として動作している
+- Rackは「RubyのWebアプリの共通インターフェース」
+  
+
+RailsはRackから受け取ったリクエストを解析し、ルーティングしてコントローラなどで処理する  
+
+イメージ：  
+[Webサーバー] → [Rack] → [Rails] → [コントローラ/アクション]  
+  
+まとめ  
+- 最初に処理するのは「Rack」
+- その後、「Rails」が本格的なアプリ処理を行う
+
+ex)  
+- **サーバー（例: Puma, Unicorn）**  
+  クライアントからのリクエストを受け取ります。
+- **Rack**  
+  サーバーとRailsアプリの間でリクエスト情報を「環境変数（env）」というHashにまとめて渡します。
+- **Rails**  
+  Rackから受け取ったenv Hashをもとに、`ActionDispatch::Request`（= `request`）インスタンスを生成します。  
+  この `request.env` が、Rackから受け取った元の環境変数（Hash）です。
+
+つまり、
+- `request` はRailsが生成したリクエストオブジェクト
+- `request.env` はRackから受け取ったリクエスト情報（Hash）
+
+
+1. **request.env とは何か？**
+    - `request.env` は、Railsコントローラ内で使える「Rack環境変数（Rack Environment）」のハッシュ。
+    - これは、HTTPリクエストに関するさまざまな情報（ヘッダー、サーバー情報、ミドルウェアが追加した値など）を格納。
+    - `request` は Railsコントローラのインスタンスメソッドで、現在のリクエストオブジェクト（`ActionDispatch::Request`）を返す。
+    - `request.env` は、そのリクエストに紐づくRack環境変数（Hash）。
+
+2. **Rails 定数や params との違い**
+    - Rails 定数は、Railsアプリ全体の設定や情報を持つ「グローバル」な定数。
+        - 例: `Rails.env`, `Rails.root` など
+    - `params` は、リクエストで送信されたパラメータ（GET/POSTデータなど）を格納したハッシュです。
+    - `request.env` は、リクエストごとに生成される「リクエストスコープ」のハッシュで、HTTPヘッダーやミドルウェアが追加した情報（例: OmniAuthの認証情報）などが入ります。
+
+3. **どこからでも request.env できる？**
+    - コントローラやビューで `request.env` を使うことはできます（ただしビューで使うことは稀）。
+    - `rails c`（コンソール）で `request.env` は使えません。
+        - なぜなら、コンソールはリクエストが存在しないためです。
+    - モデルやlibなど、リクエストの文脈がない場所では使えません。
+    - コントローラや一部のヘルパーでのみ利用可能です。
+
+- `request.env` は**サーバー側の情報**なので、<u>ブラウザの開発者ツール（F12）では直接見られません</u>。
+- Railsでエラーが発生したときに下に表示されるコンソール画面は、**RailsのWebコンソール（Web Console）**で `reauest.env`を確認できる。
+
+### request.env 確認方法
+1. コントローラで logger を使う
+```ruby
+def create
+  logger.info request.env.inspect  # すべて出力（量が多いので注意）
+  logger.info request.env["omniauth.auth"].inspect  # 必要な部分だけ
+  # ...残りの処理
+end
+```
+
+- サーバーを起動しているターミナル（またはlog/development.log）で内容を確認できます。
+2. byebug や pry でブレークポイントを置く
+Gem byebug や pry を使って、リクエスト時に一時停止し、コンソールで中身を確認できます。
+```ruby
+def create
+  byebug
+  # または
+  # binding.pry
+  # ...残りの処理
+end
+```
+- ブラウザでそのアクションにアクセスすると、サーバー側でデバッガが起動し、request.env などを直接確認できます。
+
+3. 必要な値だけビューに表示する（簡易的な方法）
+一時的にビューやコントローラで値を表示することもできます。
+```ruby
+render plain: request.env["omniauth.auth"].inspect
+```
+
+
+request とは
+リクエスト全体の情報を持つオブジェクト（ActionDispatch::Request）。
+HTTPメソッド（GET/POSTなど）、ヘッダー、IPアドレス、パス、クッキー、env など、
+リクエストに関するあらゆる情報を取得できる。
+例：
+
+```rb
+request.method         # "GET" や "POST"
+request.path           # "/users/1"
+request.remote_ip      # アクセス元IP
+request.env            # Rack環境変数（ハッシュ）
+request.headers        # HTTPヘッダー
+```
+
+params とは
+リクエストで送信されたパラメータ（値）だけをまとめたハッシュ。
+URLのクエリパラメータ、フォーム送信値、ルーティングで抽出された値などが入る。
+例：
+```ruby
+params[:id]            # /users/1 なら 1
+params[:name]          # フォームで送信された name
+params[:search]        # ?search=xxx の値
+```
+
+まとめ表    
+
+|            | request                                 | params                       |
+|------------|-----------------------------------------|------------------------------|
+| **役割**   | リクエスト全体の情報                    | パラメータ（値）だけ         |
+| **型**     | オブジェクト                            | ハッシュ                     |
+| **例**     | method, path, env, headers など         | id, name, search など        |
+| **用途**   | 詳細なリクエスト情報が必要な時           | 送信された値を使いたい時     |
+
+> **イメージ**  
+> request = 「封筒そのもの」  
+> params = 「封筒の中に入っている申込書の内容（値）」  
+
+paramsの内容も広い意味でrequestの中に含まれています。  
+詳しく説明  
+params は、request オブジェクトが持つ情報の一部（リクエストから抽出されたパラメータ）です。
+ただし、request の中に params というメソッドやプロパティが直接あるわけではありません（Railsが便利にまとめてくれている）。
+
+### 仕組み
+
+params は、以下の値を合体させたものです。
+
+- `request.query_parameters`（GETパラメータ）
+- `request.request_parameters`（POSTパラメータ）
+- `request.path_parameters`（ルーティングで抽出された値）
+
+つまり、params の元データは request オブジェクトの中にあります。
+
+```ruby
+params[:id]
+# 実際は
+request.query_parameters[:id]
+request.request_parameters[:id]
+request.path_parameters[:id]
+# などを合成したもの
+```
+
+> **まとめ**  
+> params の内容は request から作られている。  
+> ただし、`request.params` という形で直接アクセスすることは少ない（Railsがコントローラで params を用意してくれる）。
+
+参考
+- params は「リクエストの中の“値”だけをまとめたもの」
+- request は「リクエスト全体の情報（値以外も含む）」
+
+
+# railsとbin/railsコマンドの違い
+
+- `rails`コマンド は システム全体にインストールされた Rails 実行ファイル を使います。
+- `bin/rails`コマンド は そのプロジェクト専用の Bundler環境 で実行されます。
+
+| コマンド | 実行環境 | 特徴 |
+|--------|--------|--------|
+| `rails` | グローバル環境 | システムにインストールされた Rails を使う。複数プロジェクトで gem のバージョンが違うと不整合が起きる可能性あり。 |
+| `bin/rails` | プロジェクトローカル | `bundle install` で生成された `bin/rails` を使い、Gemfile に定義されたバージョンで Rails を実行。安全・確実。|  
+
+ bin/rails は実質的に bundle exec rails と同じ意味を持ちます。
+
+
+
+
+---
+
 ## importmapを使ってBootstrap導入
-Importmapで Bootstrap / jQuery / Popper.js 導入方法
+importmap の基本的な流れ  
+
+1. CDNなどのURLを importmap で pin する  
+importmap.rb で、必要なライブラリやモジュールをCDN（またはローカル）からpinします。
+```rb
+pin "lodash", to: "https://cdn.jsdelivr.net/npm/lodash-es@4.17.21/lodash.js"
+pin "bootstrap", to: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.esm.min.js"
+```
+
+2. application.js で import する  
+importmapでpinした名前を使って、ESM形式でimportします。
+```js
+import { debounce } from "lodash"
+import * as bootstrap from "bootstrap"
+```
+
+3. 必要な関数やクラスだけ import して使う  
+例えば、import { hoge, foo } from "mylib" のように、必要な部分だけimportできます。
+
+まとめ  
+- importmapでpinするのは基本的にCDNのURL（またはローカルのパス）
+- application.jsなどでESM形式（ECMAScript Modules）でimportして使う
+- 必要な関数やクラスだけをimportして利用できる
+
+
+
+
+
+> 注意：追記  
+> コンソールにエラー出てないか確認  
+import "bootstrap" で Cannot use import statement outside a module というエラーが出る場合、  
+Importmap環境ではESM（ECMAScript Modules）として解釈されていないことが原因。
+```haml
+%head
+  = javascript_importmap_tags
+```
+- `javascript_include_tag, javascript_pack_tag` ではなく javascript_importmap_tags を使う
+  
+> 重要：
+
+
+まとめ  
+- Importmap環境**では** rails-ujs を直接利用することはサポートされていません（グローバルスコープの違いによりエラーになります）。
+- Rails 7 + Importmap では、UJS の代わりに Turbo や Stimulus の利用が推奨されています。
+
+
+```sh
+rails-ujs.js:12 Uncaught TypeError: Cannot set properties of undefined (setting 'Rails')
+```
+このエラーは、rails-ujs がグローバルな window.Rails をセットしようとしているが、window が未定義（ESM環境でのimport時によく発生）なため。
+ 
+原因  
+- rails-ujs **は** 本来SprocketsやWebpackerなどの「古い」アセットパイプライン用で、ESM(importmap)環境ではうまく動作しません。
+- Importmapで直接rails-ujsを読み込むと、グローバル変数の扱いでエラーになります。
+
+解決策  
+> 1. UJSをImportmapで使うのは非推奨    
+Rails 7 + Importmapでは、UJSは公式にはサポートされていません。
+（Turbo/Stimulusへの移行が推奨されています）
+2. どうしてもUJSを使いたい場合  
+CDNで直接scriptタグで読み込む  
+
+application.html.haml の</head>直前などに以下を追加：  
+```haml
+%script{ src: "https://cdn.jsdelivr.net/npm/rails-ujs@5.2.4/lib/assets/compiled/rails-ujs.js" }
+:javascript
+  Rails.start();
+```
+これでdata-methodやdata-confirmが動作しました。（postできましたgetになってた)
+
+まとめ  
+- Importmapでrails-ujsをimportするとエラーになる
+- CDNでscriptタグで直接読み込むことで一応動作します
+- 公式にはTurbo/Stimulusへの移行が推奨されています
+  - Hotwire (Turbo & Stimulus) 公式サイト: https://hotwired.dev/
+  - Rails Guides: Working with JavaScript in Rails (Turbo & Stimulus): https://guides.rubyonrails.org/working_with_javascript_in_rails.html
+
+**Rails 7以降は、従来のUJSではなくTurboとStimulusによるモダンなJavaScript開発が推奨されています。**
+
+
+### Importmapで Bootstrap / jQuery / Popper.js 導入方法
 
 1. **config/importmap.rb**: **パッケージ追加**
 
@@ -218,8 +495,10 @@ bin/rails db:migrate
     = yield
 ```
 - CSRF対策のため：リンクは postメソッド
+- method: :post はJavaScriptが動作して初めてPOSTリクエストになります。JSが無効・読み込まれていない場合はGETになります。
+- Rails UJSの読み込みと、javascript_pack_tag の記述を再確認
 
-ログインをクリック → 認証ボタンをクリック → エラー(認証後の処理を書いていないため)
+ログインをクリック → 認証ボタンをクリック → エラー(認証後の処理を書いていないため)  
 <img src="/assets/img/auth-err.png" />
 
 ### 認証後の処理：

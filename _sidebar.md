@@ -1,4 +1,5 @@
 <!-- - [ホーム](/) -->
+- [HOTW⚡RE](/hotwire.md)
 - [Rails](/rails/index.md)
   - [Rails Tutorial](/rails/rails-tutorial.md)
   - [Rails SetUP](/rails/setup.md)
@@ -20,6 +21,7 @@
 - [セキュリティ](/security/index.md)
 <!-- - [Tutorial links](https://www.learnenough.com/courses) -->
 - [開発環境 | codespace](/development-env.md)
+- [Linuxコマンド一覧](/cmd.md)
 - [FAQ](faq.md)
 
 <!-- _sidebar.md -->

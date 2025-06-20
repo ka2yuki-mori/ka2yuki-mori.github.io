@@ -1,5 +1,21 @@
 # Rack memo
 
+# リクエストが来たときの流れ（RackとRailsの関係）
+- Rackが最初に受け取り、次にRailsに渡す という流れ
+- Railsは「Rackアプリケーション」として動作している
+- Rackは「RubyのWebアプリの共通インターフェース」
+ 
+RailsはRackから受け取ったリクエストを解析し、ルーティングしてコントローラなどで処理する  
+
+イメージ：  
+[Webサーバー] → [Rack] → [Rails] → [コントローラ/アクション]
+## まとめ
+最初に処理するのは「Rack」  
+その後、「Rails」が本格的なアプリ処理を行う
+
+
+---
+
 ## Ruckとは：
   - インターフェイスを共通化した仕様で実装となっている**ライブラリ**：WebAppサーバとWebAppフレームワーク間の**インターフェイス**。：[[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo): p129
   - PythonのWGSIという規格を元に提案されたものが Ruck。｜[[パーフェクトRubyonRails](https://amzn.to/43QRVDL)](https://amzn.to/45aUlzo): p130
