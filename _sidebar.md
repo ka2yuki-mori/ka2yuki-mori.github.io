@@ -5,6 +5,7 @@
   - [Rails SetUP](/rails/setup.md)
   - [Rails x7](/rails/v7.md)
   - [Rails CLI](/rails/rails-cli.md)
+  - [Rails migration](/rails/migration.md)
 - [Ruby](/ruby/index.md)
 <!-- - ガイド
   - [基本編](guide.md)

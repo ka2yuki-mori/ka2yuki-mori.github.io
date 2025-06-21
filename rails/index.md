@@ -3,6 +3,7 @@
 > Ruby 3.3.8   
 > Rails 7.1.5.1
 
+# もくじ
 ## 1: 仕様
 - 1-1: 実装の仕様
 - 1-2: ルーティング仕様
@@ -24,7 +25,7 @@
 
 ## 4: イベント登録機能
 - 4-1: タイムゾーン設定
-- 4-2: モデル作成（イベント用）
+- 4-2: モデル作成：イベント用
 - 4-3: ログイン状態管理の処理
 - 4-4: フォーム作成：イベント登録用
 - 4-5: バリデーションエラー時の設定
@@ -50,6 +51,7 @@
 
 ## 9: おわりに
 
+<hr style="border-color: #42b983;">
 
 
 
@@ -347,25 +349,144 @@ bin/rails db:migrate
 <img src="/assets/img/auth-err.png" />
 
 
-### 認証後の処理：
+### 認証後の処理
 - コントローラ：セッション削除
 - ログアウトリンク作成
 - コントローラ：ログアウト機能作成
 - ルーティング
-  
 
-6-4 イベント登録機能：
+
+# 4: イベント登録機能
 - ヘッダーに「イベントを作る」リンク  を作成
 - ログイン状態 で「イベントを作る」をクリック → イベント登録フォームに遷移
 - 未ログイン状態 で「イベントを作る」をクリック → トップページにリダイレクト
 - イベント登録フォームで 間違った入力をする → エラーメッセージが表示
 - イベント登録フォームで 正しい入力をする → イベント登録される
 
+## 4-1: タイムゾーン設定
+config/application.rb
+```rb
+module AwesomeEvents
+  class Application < Rails::Application
+    config.load_defaults 7.1
+    config.time_zone = "Tokyo"
+  end
+end
+```
+- Railsで扱う時は自動的に UTC → JST：日本時間に変換が実行される
+- DB保存は UTCに変換される
+
+## 4-2: モデル作成：イベント用
+Eventsテーブルのカラム  
+
+|カラム名| 意味 |
+|---|---|
+| owner_id | イベント作成した UserモデルのID |
+| name | イベントの名前 |
+| place | イベントの開催場所 |
+| start_at | イベント開始時間 |
+| end_at | イベント終了時間 |
+| content | イベントの詳細 |
+
+resourceコマンド：モデル・コントローラ・ルーティングを同時作成
+```bash
+bin/rails g resource event owner:references name place start_at:datetime end_at:datetime content:text
+```
+
+
+> bigint の直接指定：  
+Railsは「generatorではシンプルな型指定、詳細な型はマイグレーションで調整」という方針に変わったためできなくなりました。  
+> Rails 6以降、t.references や t.belongs_to で外部キーを作ると、自動で bigint 型になります。  
+そのため、generatorで明示的に bigint を指定する必要がなくなりました。  
+t.integer ではなく t.references の方がリレーションや外部キー制約も自動で付くので便利。
+
+おすすめ  
+bin/rails g resource event owner:references
+
+理由  
+- references を使うと、外部キーとして自動的に bigint 型になります（Rails 6以降のデフォルト）。
+- t.references :owner, foreign_key: true という形でマイグレーションが生成され、リレーションも明示的になります。
+- **モデル側でも** belongs_to :owner などの**関連付けがしやすく**なります。
+
+まとめ  
+- owner:references を**推奨**（外部キー・bigint・関連付けが自動）
+- owner_id:integer だと単なる整数カラムになり、リレーションや外部キー制約は自動で付きません
+
+references の正しい書き方 t.references :owner, foreign_key: true です。  
+:owner_id ではなく :owner を指定します（自動で owner_id カラムになります）。  
+  
+  
+```rb
+class CreateEvents < ActiveRecord::Migration[7.1]
+  def change
+    create_table :events do |t|
+      t.references :owner, null: true, foreign_key: true
+      t.string :name, null: false
+      t.string :place, null: false
+      t.datetime :start_at, null: false
+      t.datetime :end_at, null: false
+      t.text :content, null: false
+
+      t.timestamps
+    end
+  end
+end
+```
+  
+- ownerカラムに **null許可**：**退会機能を実装する際に null保存** するため
+- NOT NULL制約の追加  
+  
+  
+まとめ   
+- `t.references :owner, null: true, foreign_key: true`  
+  → owner_id カラムを追加し、外部キー制約も付与（**インデックスも自動**で付く）。
+- `add_index :events, :owner_id`  
+  → 既存の owner_id カラムにインデックスだけを追加（外部キー制約は付かない）。  
+  
+通常は t.references :owner, null: true, foreign_key: true で十分です。
+
+app/models/event.rb
+```rb
+class Event < ApplicationRecord
+  belongs_to :owner, class_name: 'User'
+end
+```
+
+> update
+```rb
+t.references :owner, null: true, foreign_key: true
+```
+- Railsは **owner から推測**して **ownersテーブルに** **外部キーを貼ろうと**します。
+- <u>でもそんなテーブルは**無い**</u>。（usersテーブル に向けたい）
+- よってマイグレーション時にエラーになる可能性が高い。
+
+```rb
+t.references :owner, null: true, foreign_key: { to_table: :users }
+```
+- **外部キー先を明示的に指定**。 usersテーブル に向ける。
+- **owner_idカラムが生成** され、**users.id への外部キー制約**が付きます。
+- この書き方が正しいアプローチです。
+
+👀 モデル側の class_name: 'User' とは？
+- これは**あくまで**「**アソシエーションの解釈（ActiveRecord上の紐付け）**」の指定であって、
+- **DBレベル** の**外部キー制約とは無関係**なんです。
+
+✅ 結論
+- foreign_key: true **だと** ownersテーブル を **参照しようと** して 間違える。
+- foreign_key: { to_table: :users } を書いてあげると、**明確に外部キー先を指定** できて **エラー回避** できます。
+- モデルの class_name: 'User' とは**用途が違う**ので、**両方必要**です。
 
 
 
+```sh
+$ bin/rails db:migrate
+```
+
+バリデーション内容：  
 
 
+
+<hr style="border-color: #42b983;">
 
 # 参考書籍
 
