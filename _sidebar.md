@@ -19,6 +19,7 @@
 - [Rack](/rack/index.md)
 - [SSG](/ssg/index.md)
 - [セキュリティ](/security/index.md)
+- [WordPress](/wordpress/rest-api.md)
 <!-- - [Tutorial links](https://www.learnenough.com/courses) -->
 - [開発環境 | codespace](/development-env.md)
 - [Linuxコマンド一覧](/cmd.md)

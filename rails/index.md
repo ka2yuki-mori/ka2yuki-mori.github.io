@@ -1,24 +1,40 @@
 # Rails
 
 ## tips
-- `config/initializers/*` 配下のファイルは、Railsアプリ起動時に一度だけ読み込まれ実行されます。
+
+### デバッガー: debugger で使える主要なコマンド
+```rb
+def show
+  debugger  # デバッグ用のブレークポイントを追加
+```
+- `q` または `quit` - デバッガーを終了してプログラムの実行も停止
+- `exit` - デバッガーを終了してプログラムを続行
+- `n` または `next` - 次の行に進む（メソッドの中には入らない）
+- `s` または `step` - 次の行に進む（メソッドの中に入る）
+- `c` または `continue` - デバッガーを終了してプログラムを続行
+- `l` または `list` - 現在の周辺のコードを表示
+- `p 変数名` - 変数の値を表示
+- `pp 変数名` - 変数の値を整形して表示
+  
+    
+### `config/initializers/*` 配下のファイル
+- `config/initializers/*` 配下のファイルは、Railsアプリ起動時に一度だけ読み込まれ実行される。
 - そのため、initializersディレクトリ内を変更した場合`rails s`（サーバー）を再起動しないと変更が反映されない。
 
 **まとめ：**  
 initializersディレクトリを編集したら、`rails s` 再起動
 
-### Railsv7のWebpackerは..
-- Rails 7 では Webpackerはデフォルトでは有効になっていません。
-- Rails 7 のデフォルトは Importmap です。
+### Webpacker of Rails.v7 is
+- Rails 7 では Webpackerはデフォルトでは有効になっていない。
+- Rails 7 のデフォルトは Importma。
 - Webpackerやesbuild、Viteなどは自分で追加しない限り使われません。
 
+
+## post指定したのに get でリクエストされる
 ```html
 <a class="nav-link" rel="nofollow" data-method="post" href="/auth/github">GitHubでログイン</a>
 ```
-
-## post指定したのに get でリクエストされる
-
-- data-method="post" は Rails の UJS（Unobtrusive JavaScript） 機能によって、JavaScriptが有効な場合のみ動作します。
+- **data-method="post"** は Rails の **UJS機能**（ライブラリ: Unobtrusive JavaScript）。
 - JavaScriptが無効な場合や、UJSが正しく読み込まれていない場合は、通常のリンク（GETリクエスト）として動作します。
 - UJS（Unobtrusive JavaScript） は、Railsが提供するJavaScriptライブラリで、data-method などの属性を解釈してPOSTやDELETEリクエストを送る仕組みです。  
   JavaScriptが動いていても、UJSが正しく読み込まれていなければ、data-method は機能しません。
@@ -27,7 +43,7 @@ initializersディレクトリを編集したら、`rails s` 再起動
 data-method="post" はJavaScript（rails-ujs）が動作して初めて有効。
 それが無効だと、リンクはGETリクエストになる。
 
-
+---
 
 # リクエストが来たときの流れ（RackとRailsの関係）
 - Rackが最初に受け取り、次にRailsに渡す という流れ
@@ -50,13 +66,59 @@ ex)
 - **Rack**  
   サーバーとRailsアプリの間でリクエスト情報を「環境変数（env）」というHashにまとめて渡します。
 - **Rails**  
-  Rackから受け取ったenv Hashをもとに、`ActionDispatch::Request`（= `request`）インスタンスを生成します。  
-  この `request.env` が、Rackから受け取った元の環境変数（Hash）です。
+  Rackから受け取ったenv Hashをもとに、`ActionDispatch::Request`（= `request`）のインスタンスを生成します。  
+  この `request.env` が、Rackから受け取った元の環境変数（Hash）です。  
+  ActionDispatch::Requestは、RailsでHTTPリクエストの詳細情報（ヘッダー、パラメータ、セッションなど）を扱うためのクラス。
 
 つまり、
-- `request` はRailsが生成したリクエストオブジェクト
-- `request.env` はRackから受け取ったリクエスト情報（Hash）
+- `request` はコントローラ内で利用できるActionDispatch::RequestのインスタンスでRailsが生成したリクエストオブジェクト
+- `request.env` はRackから受け取ったリクエスト情報（Hash）が代入されてる
 
+`params`はリクエストパラメータ（GET/POSTデータなど）だけですが、`request`は以下のような多くの情報を持っています：
+- params（リクエストパラメータ）
+- headers（リクエストヘッダー）
+- cookies
+- session
+- path, method, ip など
+
+例：  
+
+```rb
+# コントローラ内
+def show
+  request.class # => ActionDispatch::Request
+  request.params # => paramsと同じ内容
+  request.headers["User-Agent"] # => ユーザーエージェント
+  request.remote_ip # => クライアントIP
+end
+```
+
+```bash
+echo "hello"
+```
+
+```php
+function getAdder(int $x): int 
+{
+    return 123;
+}
+```
+```html
+<p>This is a paragraph</p>
+<a href="//docsify.js.org/">Docsify</a>
+```
+
+
+
+まとめ:  
+- request は ActionDispatch::Requestインスタンス です。(params よりも多くのリクエスト情報を持つ)  
+- params は ActionController::Parametersクラスのインスタンス  
+  - 通常のHashのように使えますが、許可されたパラメータのみを扱うためのメソッド（permit, requireなど）が追加されています。
+```rb
+params.class # => ActionController::Parameters
+params[:id]  # => パラメータの値を取得
+params.permit(:name, :email) # => 許可したパラメータのみ取得
+```
 
 1. **request.env とは何か？**
     - `request.env` は、Railsコントローラ内で使える「Rack環境変数（Rack Environment）」のハッシュ。
@@ -266,10 +328,16 @@ application.html.haml の</head>直前などに以下を追加：
 :javascript
   Rails.start();
 ```
-これでdata-methodやdata-confirmが動作しました。（postできましたgetになってた)
+**UJS**ライブラリをテストするリンク
+```haml
+= link_to "UJS確認（確認ダイアログ）", "#", data: { confirm: "UJSが動いていますか？" }
+-# ダイアログが出ない場合、Rails UJS（Unobtrusive JavaScript）が正しく読み込まれていない可能性
+```
+
+これでdata-methodやdata-confirmが動作。（postもできましたgetになってた）
 
 まとめ  
-- Importmapでrails-ujsをimportするとエラーになる
+- Importmapで rails-ujs を import は非推奨。エラーになる
 - CDNでscriptタグで直接読み込むことで一応動作します
 - 公式にはTurbo/Stimulusへの移行が推奨されています
   - Hotwire (Turbo & Stimulus) 公式サイト: https://hotwired.dev/
@@ -340,8 +408,7 @@ import "popper"
 - OAuth**あり**: パスワード :arrow_right: アプリA に渡さなくてよくなる
   - Googleログイン や Facebookログインなど
 ---
-<a target="_blank" 
-  href="https://www.amazon.co.jp/OAuth%E5%BE%B9%E5%BA%95%E5%85%A5%E9%96%80-%E3%82%BB%E3%82%AD%E3%83%A5%E3%82%A2%E3%81%AA%E8%AA%8D%E5%8F%AF%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%82%92%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AE%E5%8E%9F%E5%89%87%E3%81%A8%E5%AE%9F%E8%B7%B5-Justin-Richer/dp/4798159298?&linkCode=sl1&tag=ka2yuki-22&linkId=21dd5bb0da23988e6305cbe032797e5e&language=ja_JP&ref_=as_li_ss_tl" style="
+<a target="_blank" href="https://amzn.to/44foMlT" style="
     border: 2px solid;
     width: 220px;
     display: block;
@@ -349,14 +416,14 @@ import "popper"
     border-radius: 10px;
     border-color: #90e790;
     text-align: center;
-    padding: 9px 5px;
+    padding: 9px 0;
     animation: flashShadow 2.5s infinite alternate;
     ">
-  <img src="https://m.media-amazon.com/images/I/71LvP9jh7SL._SY342_.jpg" 
+  <img 
+    src="https://m.media-amazon.com/images/I/71LvP9jh7SL._SY342_.jpg" 
     alt="OAuth徹底入門 セキュアな認可システムを適用するための原則と実践" 
-    style="border:none;width:110px;" />
-  <script>window.dataLayer = window.dataLayer || [];function gtag() { dataLayer.push(arguments); }gtag('js', new Date());gtag('config', 'G-CJF3K99R7P');</script><br />
-  OAuth徹底入門 セキュアな認可システムを適用するための原則と実践 | amazon.co.jp
+    style="border:none;width:110px;" /><script>window.dataLayer = window.dataLayer || [];function gtag() { dataLayer.push(arguments); }gtag('js', new Date());gtag('config', 'G-CJF3K99R7P');</script><br />
+    OAuth徹底入門 セキュアな認可システムを適用するための原則と実践 | amazon.co.jp
 </a>
 ---
 
@@ -427,7 +494,7 @@ end
 「/auth/:provider」URLにマッチするアクセスを受け取ると認証処理を開始。  
 :provider として渡された文字列。を どのサービスプロバイダーで認証したらよいか判別 しています。[パーフェクトRubyonRails](https://amzn.to/45aUlzo):p296
 
-暗号化のためコマンドから複合化してYAMLファイルを開きClient ID/Client secretsを保存。暗号化されて保存される(GitHubに登録したアプリのClient IDとClient secrets)
+暗号化のためコマンドから複合化してYAMLファイルを開きClient ID/Client Secretsを保存。暗号化されて保存される(GitHubに登録したアプリのClient IDとClient secrets)
 ```bash
 bin/rails credentials:edit
 ```
@@ -583,9 +650,11 @@ bin/rails credentials:show --environment staging # 確認
     padding: 9px 0;
     animation: flashShadow 2.5s infinite alternate;
     ">
-  <img src="https://m.media-amazon.com/images/W/MEDIAX_1215821-T1/images/I/81yskupyNhL._AC_AIweblab1006854,T3_SF700,700_PQ60_.jpg?aicid=detailPage-mediaBlock" alt="パーフェクトRubyonRails" style="border:none;width:110px;" /><script>window.dataLayer = window.dataLayer || [];function gtag() { dataLayer.push(arguments); }gtag('js', new Date());gtag('config', 'G-CJF3K99R7P');</script><br />
+  <img src="https://m.media-amazon.com/images/I/81yskupyNhL._SY342_.jpg" 
+    alt="パーフェクトRubyonRails" style="border:none;width:110px;" /><script>window.dataLayer = window.dataLayer || [];function gtag() { dataLayer.push(arguments); }gtag('js', new Date());gtag('config', 'G-CJF3K99R7P');</script><br />
   パーフェクトRubyonRails | Amazon
 </a>
+---
 
 
  ## link

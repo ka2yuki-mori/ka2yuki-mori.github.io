@@ -32,3 +32,28 @@ sudo apt install httpie
 http http://localhost:3000/auth/github
 http POST http://localhost:3000/auth/github
 ```
+
+## jq
+jq は、JSONデータを扱うためのコマンドラインツールです。いわば「JSON専用の grep や sed のような存在」で、APIレスポンスやログなどのJSONを整形・抽出・加工するのにとても便利
+
+- 整形表示（インデント付きで見やすく）
+```sh
+cat data.json | jq .
+```
+- 特定のキーだけ抽出
+```sh
+cat data.json | jq '.title'
+```
+- 配列の中の要素をループ処理
+
+```sh
+cat data.json | jq '.items[].name'
+```
+- ダブルクォートを外してプレーンテキストで出力
+
+```sh
+jq -r '.title' data.json
+```
+
+- macOS: brew install jq
+- Ubuntu: sudo apt install jq
